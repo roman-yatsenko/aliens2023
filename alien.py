@@ -9,6 +9,7 @@ class Alien(Sprite):
         """Ініціалізує прибульця та задає його почтакову позицію"""
         super().__init__()
         self.screen = ai_game.screen
+        self.settings = ai_game.settings
 
         # Завантаження зображення прибульця та призначення атрибуту rect
         self.image = pygame.image.load('images/alien.bmp')
@@ -20,4 +21,9 @@ class Alien(Sprite):
 
         # Збереження точної горизонтальної позиції прибульця
         self.x = float(self.rect.x)
-        
+
+    def update(self):
+        """Переміщує прибульця праовруч"""
+        self.x += self.settings.alien_speed
+        self.rect.x = self.x
+         
