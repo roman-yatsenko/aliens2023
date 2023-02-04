@@ -1,8 +1,10 @@
 import sys
+from time import sleep
 
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -21,6 +23,9 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
 
+        # Створення екземпляру для зберігання ігрової статистики
+        self.stats = GameStats(self)
+        
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -129,12 +134,33 @@ class AlienInvasion:
         if not self.aliens:
             # Знищення існуючих снарядів та створення нового флоту
             self.bullets.empty()
+            sleep(0.1)
             self._create_fleet()
 
     def _update_aliens(self):
         """Оновлює позиції всіх прибільців з флоту"""
         self._check_fleet_edges()
         self.aliens.update()
+
+        # Перевірка колізій "прибулець - корабель"
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+    
+    def _ship_hit(self):
+        """Обробляє зіткнення корабля з прибульцем"""
+        # Зменшення ships_left
+        self.stats.ships_left -= 1
+
+        # Очищення списків прибульців та снарядів
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Створення нового флоту та розміщення корабля по центру
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # Пауза
+        sleep(0.5)
 
     def _update_screen(self):
         """Обновляет изображения на экране и отображает новый экран"""
