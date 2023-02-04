@@ -77,9 +77,12 @@ class AlienInvasion:
         """Запуск основного цикла игры"""
         while True:
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self._update_aliens()
+
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
+            
             self._update_screen()
 
     def _check_events(self):
@@ -159,19 +162,22 @@ class AlienInvasion:
 
     def _ship_hit(self):
         """Обробляє зіткнення корабля з прибульцем"""
-        # Зменшення ships_left
-        self.stats.ships_left -= 1
+        if self.stats.ships_left > 0:
+            # Зменшення ships_left
+            self.stats.ships_left -= 1
+            # Очищення списків прибульців та снарядів
+            self.aliens.empty()
+            self.bullets.empty()
 
-        # Очищення списків прибульців та снарядів
-        self.aliens.empty()
-        self.bullets.empty()
+            # Створення нового флоту та розміщення корабля по центру
+            self._create_fleet()
+            self.ship.center_ship()
 
-        # Створення нового флоту та розміщення корабля по центру
-        self._create_fleet()
-        self.ship.center_ship()
-
-        # Пауза
-        sleep(0.5)
+            # Пауза
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
+            
 
     def _update_screen(self):
         """Обновляет изображения на экране и отображает новый экран"""
