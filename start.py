@@ -118,7 +118,8 @@ class AlienInvasion:
             self._create_fleet()
             self.ship.center_ship()
 
-
+            # Вказівник миші приховується
+            pygame.mouse.set_visible(False)
 
     def _check_keydown_events(self, event):
         """Реагирует на нажатие клавиш"""
@@ -200,10 +201,11 @@ class AlienInvasion:
 
             # Пауза
             sleep(0.5)
+        
         else:
             self.stats.game_active = False
+            pygame.mouse.set_visible(True)
             
-
     def _update_screen(self):
         """Обновляет изображения на экране и отображает новый экран"""
         self.screen.fill(self.settings.bg_color)
